@@ -17,19 +17,23 @@ dependencies:
   # Banco de Dados
   sqflite: ^2.3.0
   
-  # --- CORREÇÃO CRÍTICA ---
-  # Deve ser exatamente 1.9.0 para não dar conflito no GitHub Actions
+  # Path - manter versão específica
   path: 1.9.0 
-  # ------------------------
-
+  
   # Formatação de datas
   intl: ^0.18.0
   
   # Câmera
   image_picker: ^1.0.7
   
-  # OCR (Leitura de Texto)
-  google_mlkit_text_recognition: ^0.11.0
+  # ========================================
+  # CORREÇÃO CRÍTICA: ATUALIZAR ML KIT
+  # As versões antigas (0.6.x e 0.11.x) têm
+  # bug na detecção de Android Embedding V2
+  # ========================================
+  google_mlkit_text_recognition: ^0.13.0
+  # Isso vai automaticamente atualizar o commons também
+  # ========================================
 
 dev_dependencies:
   flutter_test:
