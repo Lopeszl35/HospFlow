@@ -20,14 +20,33 @@ jobs:
         with:
           flutter-version: '3.19.0'
           channel: 'stable'
-          cache: false  # IMPORTANTE: Desabilita cache para evitar erro de embedding
+          cache: false
           
-      - name: Limpar cache (corrige erro de embedding)
+      - name: Remover arquivos legados de embedding V1
+        run: |
+          # Remove qualquer rastro de embedding V1
+          rm -rf android/app/src/main/java/io/flutter/plugins/
+          rm -rf android/.idea
+          rm -rf android/app/.cxx
+          find android -name "GeneratedPluginRegistrant.java" -delete
+          find android -name "*.iml" -delete
+          
+      - name: Limpar cache
         run: |
           flutter clean
           rm -rf ~/.pub-cache
+          rm -rf ~/.gradle/caches/
           rm -rf android/.gradle
           rm -rf android/app/build
+          rm -rf build/
+          
+      - name: Verificar estrutura Android
+        run: |
+          echo "=== Verificando MainActivity ==="
+          cat android/app/src/main/kotlin/com/example/protocolo_hospitalar/MainActivity.kt
+          echo ""
+          echo "=== Verificando meta-data no Manifest ==="
+          grep -A 2 "flutterEmbedding" android/app/src/main/AndroidManifest.xml
           
       - name: Baixar Dependências
         run: flutter pub get
