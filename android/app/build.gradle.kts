@@ -21,21 +21,26 @@ android {
     defaultConfig {
         applicationId = "com.example.protocolo_hospitalar"
         
-        // --- AQUI ESTÁ A MUDANÇA CRÍTICA ---
-        // O OCR (ML Kit) exige no mínimo API 21. 
-        // Se deixar o padrão do Flutter, pode dar erro.
+        // O OCR (ML Kit) exige no mínimo API 21
         minSdk = 21
-        // -----------------------------------
-
+        
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // CRÍTICO: Define explicitamente que usa Embedding V2
+        manifestPlaceholders["flutterEmbedding"] = "2"
     }
 
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
         }
+    }
+    
+    // IMPORTANTE: Força o build a reconhecer V2
+    buildFeatures {
+        buildConfig = true
     }
 }
 
