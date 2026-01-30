@@ -1,53 +1,42 @@
-name: Build Android APK
-
+name: Construir HospFlow APK
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'zulu'
-        java-version: '17'
-        
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.24.0'
-        channel: 'stable'
-        cache: false  # Desabilita cache para evitar problemas
-        
-    - name: Limpar cache e builds antigos
-      run: |
-        flutter clean
-        rm -rf ~/.pub-cache
-        rm -rf android/.gradle
-        rm -rf android/app/build
-        
-    - name: Get dependencies
-      run: flutter pub get
+      - uses: actions/checkout@v3
       
-    - name: Verificar configuração Android
-      run: |
-        echo "Verificando AndroidManifest..."
-        grep -A 5 "flutterEmbedding" android/app/src/main/AndroidManifest.xml || echo "Meta-data não encontrada"
-        echo "Verificando MainActivity..."
-        cat android/app/src/main/kotlin/com/example/protocolo_hospitalar/MainActivity.kt
+      - name: Configurar Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+          cache: false  # IMPORTANTE: Desabilita cache para evitar erro de embedding
+          
+      - name: Limpar cache (corrige erro de embedding)
+        run: |
+          flutter clean
+          rm -rf ~/.pub-cache
+          rm -rf android/.gradle
+          rm -rf android/app/build
+          
+      - name: Baixar Dependências
+        run: flutter pub get
         
-    - name: Build APK
-      run: flutter build apk --release
-      
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release
-        path: build/app/outputs/flutter-apk/app-release.apk
+      - name: Construir APK
+        run: flutter build apk --release
+        
+      - name: Upload do APK (Salvar artefato)
+        uses: actions/upload-artifact@v4
+        with:
+          name: hospflow-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
