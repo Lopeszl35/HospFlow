@@ -1,5 +1,3 @@
-// modelo_entrega.dart
-
 // 1. O ITEM INDIVIDUAL (O Prontuário)
 class ItemEntrega {
   final int? id;
@@ -7,6 +5,8 @@ class ItemEntrega {
   final String nomePaciente;
   final String prontuario;
   final String tipoDocumento;
+  final String volume;
+  final int comCapa;
 
   ItemEntrega({
     this.id,
@@ -14,6 +14,8 @@ class ItemEntrega {
     required this.nomePaciente,
     required this.prontuario,
     required this.tipoDocumento,
+    this.volume = 'A',
+    this.comCapa = 1,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,8 @@ class ItemEntrega {
       'nomePaciente': nomePaciente,
       'prontuario': prontuario,
       'tipoDocumento': tipoDocumento,
+      'volume': volume,
+      'comCapa': comCapa,
     };
   }
 
@@ -33,6 +37,8 @@ class ItemEntrega {
       nomePaciente: map['nomePaciente'],
       prontuario: map['prontuario'],
       tipoDocumento: map['tipoDocumento'],
+      volume: map['volume'] ?? "A",
+      comCapa: map['comCapa'] ?? 1,
     );
   }
 }
@@ -41,14 +47,17 @@ class ItemEntrega {
 class Protocolo {
   final int? id;
   final String dataHora;
-  final List<int> assinaturaBytes;
-  // A lista de itens não é salva na tabela 'protocolos', mas a usamos no app
+  final List<int>? assinaturaBytes;
+  final String titulo;
+  final int status;
   final List<ItemEntrega> itens;
 
   Protocolo({
     this.id,
     required this.dataHora,
-    required this.assinaturaBytes,
+    this.assinaturaBytes,
+    this.titulo = "Remessa Geral",
+    this.status = 0, // Começa como rascunho
     this.itens = const [],
   });
 
@@ -56,7 +65,9 @@ class Protocolo {
     return {
       'id': id,
       'dataHora': dataHora,
-      'assinaturaBytes': assinaturaBytes,
+      'assinaturaBytes': assinaturaBytes, // SQLite aceita null em BLOB
+      'titulo': titulo,
+      'status': status,
     };
   }
 
@@ -64,8 +75,11 @@ class Protocolo {
     return Protocolo(
       id: map['id'],
       dataHora: map['dataHora'],
-      // Converte BLOB para lista de bytes
-      assinaturaBytes: List<int>.from(map['assinaturaBytes']),
+      assinaturaBytes: map['assinaturaBytes'] != null
+          ? List<int>.from(map['assinaturaBytes'])
+          : null,
+      titulo: map['titulo'] ?? "Remessa",
+      status: map['status'] ?? 1, // Retrocompatibilidade assume assinado
     );
   }
 }

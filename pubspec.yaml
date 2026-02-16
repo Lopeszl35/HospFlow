@@ -1,11 +1,11 @@
-name: HospFlow
+name: Hospflow
 description: A new Flutter project.
 publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.0 <4.0.0' # Subimos levemente o requisito do Dart
+  sdk: '>=3.2.0 <4.0.0' 
 
 dependencies:
   flutter:
@@ -13,15 +13,13 @@ dependencies:
   
   signature: ^5.5.0
   sqflite: ^2.3.0
-  path: 1.9.0 
-  intl: ^0.18.0
+  path: ^1.9.1 
+  intl: ^0.19.0
   image_picker: ^1.0.7
-  
-  # --- A MUDANÇA QUE RESOLVE O BUG ---
-  # Versões antigas dão erro de "Embedding V2" falso.
-  # Usamos a versão 0.13.0 que corrige isso.
   google_mlkit_text_recognition: ^0.13.0 
-  # -----------------------------------
+  
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

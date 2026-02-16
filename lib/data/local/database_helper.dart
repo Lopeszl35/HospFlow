@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'modelo_entrega.dart';
+import '../models/modelo_entrega.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -35,7 +35,9 @@ class DatabaseHelper {
       CREATE TABLE protocolos(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         dataHora TEXT,
-        assinaturaBytes BLOB
+        assinaturaBytes BLOB,
+        titulo TEXT,
+        status INTEGER DEFAULT 0 
       )
     ''');
 
@@ -46,6 +48,8 @@ class DatabaseHelper {
         nomePaciente TEXT,
         prontuario TEXT,
         tipoDocumento TEXT,
+        volume TEXT,
+        comCapa INTEGER,
         FOREIGN KEY (protocolo_id) REFERENCES protocolos (id) ON DELETE CASCADE
       )
     ''');
@@ -101,5 +105,19 @@ class DatabaseHelper {
     Database db = await database;
     // Como configuramos ON DELETE CASCADE, isso apaga os itens automaticamente
     await db.delete('protocolos', where: 'id = ?', whereArgs: [id]);
+  }
+
+  //  Novo método para coletar assinatura depois de ja ter preenchido e salvado protocolo
+  Future<void> assinarProtocolo(int id, List<int> assinatura) async {
+    Database db = await database;
+    await db.update(
+      'protocolos',
+      {
+        'assinaturaBytes': assinatura,
+        'status': 1 // Marca como Finalizado
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }
